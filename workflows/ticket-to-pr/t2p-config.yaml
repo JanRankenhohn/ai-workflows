@@ -1,0 +1,28 @@
+# Workflow Configuration
+# Edit this file to match your environment.
+# Referenced by t2p-workflow.instructions.md — all workflow prompts apply these settings.
+
+mcp_servers:
+  jira: false # Required for /t2p-JIRA and /t2p-REVIEW
+  azure_devops: false # Required for /t2p-CREATE-PR
+
+tech_stack:
+  # Map each stack to its review criteria and optional persona (agent file).
+  # review_criteria: loaded by /review for code quality checks.
+  # persona: loaded by /spec and /implement to adopt a stack-specific expert role.
+  # Set to false or remove entries you don't use.
+  # Example:
+  # dotnet:
+  #   review_criteria: "dotnet-review-criteria.instructions.md"
+  #   persona: "csharp-expert.agent.md"
+  # react:
+  #   review_criteria: "react-review-criteria.instructions.md"
+  #   persona: "react-expert.agent.md"
+
+branch_naming:
+  feature: "feature/<TICKET-ID>-short-description"
+  fix: "fix/<TICKET-ID>-short-description"
+
+conventions:
+  spec_directory: "~/specs/<ticket-id>/" # Where you want your specs to be stored
+  one_subtask_one_pr: true
