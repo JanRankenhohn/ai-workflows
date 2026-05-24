@@ -1,0 +1,5 @@
+- Feedback loop
+- Extend Ticket stack
+- Extend pr stack
+- Extend IDE support
+- install script
