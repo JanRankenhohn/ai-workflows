@@ -17,112 +17,53 @@ tools:
 
 > **Workflow prompt.** Read `t2p-workflow.instructions.md` for pipeline context and configuration before proceeding.
 
-## Parsing the user's input
+## Step 1 — Fetch ticket data
 
-The **first whitespace-delimited token** in the user's message is the **complete Jira ticket ID**. Use it verbatim — do NOT split, truncate, or reinterpret it at underscores, hyphens, or other characters.
+If Jira MCP is configured (`t2p-config.yaml` → `mcp_servers.jira`), fetch all of the following:
 
-## Artifact location
+- **Main ticket** (`<ticket-id>`): summary, status, description, issuetype, priority, assignee, labels
+- **Subtasks** (JQL `parent = <ticket-id>`): summary, status, description, issuetype, priority, assignee
+- **Linked issues** (JQL `issuekey in linkedIssues(<ticket-id>)`): summary, status, description, issuetype
 
-Resolve the spec directory from `t2p-config.yaml` → `conventions.spec_directory`. If not configured, search the workspace for a `specs/` directory or ask the user.
+If Jira is unavailable, ask the user to paste ticket details (title, description, acceptance criteria, subtasks). If there are no subtasks, proceed with the parent ticket as a single work item.
 
-The plan file is saved at:
+## Step 2 — Lightweight codebase impact scan
 
-```
-<spec_directory>/<ticket-id>/plan.md
-```
+Identify key domain terms from the ticket and subtasks (entity names, service names, endpoint paths, configuration keys). Search the codebase using **file search and grep first**; read targeted sections only when grep matches are insufficient. The goal is to map the blast radius, not to understand implementation details (that happens in `/t2p-SPEC`).
 
-Where `<ticket-id>` is the Jira ticket ID in lowercase. Create the directory if it doesn't exist.
+Produce a short impact summary (max 15 lines) covering: layers affected, key files likely to change (max 10), and red flags (missing entities, no test coverage, naming mismatches).
 
-## Step 1 — Fetch the ticket
+If the ticket is non-code work, skip this step and note "No codebase impact."
 
-Check `t2p-config.yaml` → `mcp_servers.jira`. If Jira is enabled, use the Jira MCP server:
+## Step 3 — Critical analysis
 
-- Get the main ticket using the provided ticket ID. Request fields: `summary,status,description,issuetype,priority,assignee,labels`.
+Analyze the ticket and subtasks for:
 
-**If Jira MCP is not available or not configured:** Ask the user to paste the ticket details (title, description, acceptance criteria, subtasks). Use the pasted content for all subsequent steps. Note to the user that enabling the Jira MCP server automates this step.
+- Missing or vague acceptance criteria / Definition of Done
+- Subtasks with empty descriptions or that don't cover the parent's full scope
+- Contradictions between parent and subtask descriptions
+- Missing subtasks (testing, migration, documentation)
+- Ambiguous terms, implicit assumptions, unaddressed edge cases
+- Dependencies on other teams/services not mentioned
+- Whether the described approach is the simplest viable option
+- Existing codebase patterns that should be followed
 
-## Step 2 — Fetch subtasks
+## Step 4 — Q&A with the user
 
-Search for child issues of this ticket using JQL: `parent = <ticket-id>`. Request fields: `summary,status,description,issuetype,priority,assignee`.
+**Do NOT create the plan document yet.**
 
-If Jira is unavailable, ask the user to list the subtasks (title + description for each). If there are no subtasks, proceed with the parent ticket as a single work item.
-
-## Step 3 — Fetch linked issues (context)
-
-Search for issues linked to the main ticket using JQL: `issuekey in linkedIssues(<ticket-id>)`. Request fields: `summary,status,description,issuetype`. This helps understand dependencies and related work.
-
-If Jira is unavailable, skip this step.
-
-## Step 4 — Lightweight codebase impact scan
-
-Identify key domain terms from the ticket and subtasks: entity names, service names, endpoint paths, project names, configuration keys.
-
-Search the codebase for these terms using **file search and grep first**. Read small, targeted sections of key files only when a grep match is insufficient to assess impact (e.g., to confirm whether groundwork already exists). The goal is to map the blast radius, not to understand implementation details (that happens in `/t2p-SPEC`).
-
-Produce a short impact summary (keep under 20 lines total):
-
-- **Layers affected:** which of API / Business / Database / Common / ExternalAPI are touched
-- **Estimated files:** count of files matching the key terms
-- **Key files:** list of paths most likely to change (max 10)
-- **Red flags:** anything surprising — missing entities, recent large rewrites, no test coverage for affected areas, naming mismatches
-
-If the ticket is non-code work (infrastructure, documentation, meetings), skip this step and note "No codebase impact."
-
-Include the impact summary in the findings presented to the user in Step 6 so that Q&A questions are grounded in actual codebase state.
-
-## Step 5 — Critical analysis
-
-Before creating any document, carefully analyze the ticket and subtasks for:
-
-### Completeness
-
-- Are acceptance criteria clearly defined? If missing, flag it.
-- Does every subtask have a description? Flag empty ones.
-- Are there subtasks for testing, documentation, or migration that might be missing?
-- Is the Definition of Done clear?
-
-### Consistency
-
-- Do the subtasks actually cover the full scope of the parent ticket description?
-- Are there contradictions between the parent description and subtask descriptions?
-- Do estimated efforts (if present) seem reasonable relative to each other?
-
-### Ambiguity & Risk
-
-- Are there vague terms that could be interpreted multiple ways?
-- Are there implicit assumptions that should be made explicit?
-- Are there technical risks or unknowns not addressed?
-- Are there dependencies on other teams, services, or deployments not mentioned?
-- What could go wrong? What edge cases are not addressed?
-
-### Architecture & Design
-
-- Is the chosen approach (if described) well-reasoned?
-- Are there simpler alternatives worth considering?
-- Are there existing patterns in the codebase that should be followed or avoided?
-
-## Step 6 — Q&A with the user
-
-**IMPORTANT: Do NOT create the plan document yet.**
-
-Present your findings from steps 1-5 as a compact summary:
+Present findings from steps 1-3 as a compact summary:
 
 1. **Ticket overview** — title, type, status, subtask count
-2. **Impact summary** — from Step 4 (layers, key files, red flags)
-3. **Issues found** — numbered list of completeness, consistency, ambiguity, and architecture concerns
+2. **Impact summary** — layers, key files, red flags
+3. **Issues found** — numbered list of concerns from the critical analysis
 4. **Assumptions** — what you'll assume if the user doesn't clarify
 
-Then ask focused questions:
+Then ask focused questions (max 3-4 per batch, with concrete options where possible). Flag which are blocking vs. informational. Wait for answers before proceeding.
 
-- Group related questions (max 3-4 per batch)
-- Provide concrete options where possible
-- Flag which questions are blocking (must answer) vs. informational (will assume default)
+## Step 5 — Create the plan document
 
-Wait for the user's answers before proceeding.
-
-## Step 7 — Create the plan document
-
-After Q&A is complete, create the plan at `<spec_directory>/<ticket-id>/plan.md`:
+After Q&A is complete, save the plan to the artifact path defined in the workflow instructions:
 
 ```markdown
 # Plan: <TICKET-ID> — <Title>
@@ -130,7 +71,6 @@ After Q&A is complete, create the plan at `<spec_directory>/<ticket-id>/plan.md`
 **Ticket:** <ticket-id>
 **Type:** <issue type>
 **Status:** <status>
-**Created:** <date>
 
 ## Summary
 
@@ -161,7 +101,3 @@ After Q&A is complete, create the plan at `<spec_directory>/<ticket-id>/plan.md`
 
 <Anything unresolved that the developer should decide before starting>
 ```
-
-## Step 8 — Self-reflection
-
-Follow the self-reflection process defined in `t2p-workflow.instructions.md`.
