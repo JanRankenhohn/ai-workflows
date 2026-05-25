@@ -3,11 +3,12 @@
 A structured AI development workflow for **VS Code + GitHub Copilot** that takes you from a Jira ticket to a pull request — with planning, specification, implementation, testing, and review stages.
 
 ```
-/t2p-JIRA → /t2p-SPEC → /t2p-IMPLEMENT → /t2p-TEST → /t2p-REVIEW → /t2p-CREATE-PR
+[/t2p-EXPLORE] → /t2p-PLAN → /t2p-SPEC → /t2p-IMPLEMENT → /t2p-TEST → /t2p-REVIEW → /t2p-CREATE-PR
 ```
 
 Each stage runs in its own chat session with developer review between stages.
 
+- 🧠 **Domain exploration first** (optional) — the AI grills you on the domain, cross-references the codebase, and captures a shared glossary before any planning begins.
 - 🎯 **Ticket challenge before planning** — the AI challenges your ticket in detail and gains common understanding together with you about the domain and problem to solve.
 - 📋 **Spec before code** — the AI scans your codebase and writes a technical spec. You review it. Then it implements exactly what was agreed.
 - 🔨 **Step-by-step implementation** — changes are made one logical step at a time with a build check and your approval after each.
@@ -20,12 +21,12 @@ Each stage runs in its own chat session with developer review between stages.
 
 This workflow uses [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) servers to interact with external services. Install and configure the servers you need, then enable them in `t2p-config.yaml`.
 
-| Config key     | Purpose       | Stage(s)                   | Example server                                                    |
-| -------------- | ------------- | -------------------------- | ----------------------------------------------------------------- |
-| `jira`         | Fetch tickets | `/t2p-JIRA`, `/t2p-REVIEW` | [mcp-atlassian](https://github.com/sooperset/mcp-atlassian)       |
-| `azure_devops` | Create PRs    | `/t2p-CREATE-PR`           | [azure-devops-mcp](https://github.com/microsoft/azure-devops-mcp) |
+| Config key     | Purpose       | Stage(s)                                   | Example server                                                    |
+| -------------- | ------------- | ------------------------------------------ | ----------------------------------------------------------------- |
+| `jira`         | Fetch tickets | `/t2p-EXPLORE`, `/t2p-PLAN`, `/t2p-REVIEW` | [mcp-atlassian](https://github.com/sooperset/mcp-atlassian)       |
+| `azure_devops` | Create PRs    | `/t2p-CREATE-PR`                           | [azure-devops-mcp](https://github.com/microsoft/azure-devops-mcp) |
 
-**Without MCP servers:** The workflow still works — `/t2p-JIRA` will ask you to paste the ticket details, and `/t2p-CREATE-PR` will generate the PR description for you to create manually. The middle stages (`/t2p-SPEC`, `/t2p-IMPLEMENT`, `/t2p-TEST`, `/t2p-REVIEW`) don't require any MCP servers.
+**Without MCP servers:** The workflow still works — `/t2p-EXPLORE` and `/t2p-PLAN` will ask you to paste the ticket details, and `/t2p-CREATE-PR` will generate the PR description for you to create manually. The middle stages (`/t2p-SPEC`, `/t2p-IMPLEMENT`, `/t2p-TEST`, `/t2p-REVIEW`) don't require any MCP servers.
 
 ## 🚀 Quick Start
 
@@ -51,13 +52,14 @@ This workflow uses [MCP (Model Context Protocol)](https://modelcontextprotocol.i
    - Set your spec directory path
    - Map your tech stacks to review criteria and optional persona files
 
-3. Run `/t2p-JIRA PROJ-123` in Copilot Chat.
+3. Run `/t2p-PLAN PROJ-123` in Copilot Chat (or `/t2p-EXPLORE PROJ-123` first for unfamiliar domains).
 
 ## ⚙️ How It Works
 
 | Stage            | Command          | What it does                                                              |
 | ---------------- | ---------------- | ------------------------------------------------------------------------- |
-| 🎯 **Plan**      | `/t2p-JIRA`      | Fetch ticket, critical analysis, Q&A, group subtasks into PR-sized chunks |
+| 🧠 **Explore**   | `/t2p-EXPLORE`   | Optional: domain grilling, codebase cross-referencing, CONTEXT.md         |
+| 🎯 **Plan**      | `/t2p-PLAN`      | Fetch ticket, critical analysis, Q&A, group subtasks into PR-sized chunks |
 | 📋 **Specify**   | `/t2p-SPEC`      | Scan codebase, Q&A, create per-subtask technical spec                     |
 | 🔨 **Implement** | `/t2p-IMPLEMENT` | Implement from spec step-by-step, pause after each step for review        |
 | 🧪 **Test**      | `/t2p-TEST`      | Generate unit tests from the spec's test plan                             |
@@ -80,7 +82,7 @@ You never need to fork or edit the generic files — configure the domain layer 
 ## 📂 Files
 
 ```
-t2p-*.prompt.md                  6 workflow stages (JIRA, SPEC, IMPLEMENT, TEST, REVIEW, CREATE-PR)
+t2p-*.prompt.md                  7 workflow stages (EXPLORE, PLAN, SPEC, IMPLEMENT, TEST, REVIEW, CREATE-PR)
 t2p-config.yaml                  User-customizable settings
 t2p-workflow.instructions.md     Pipeline documentation, loaded by all prompts
 t2p-spec-template.md             Template used by /t2p-SPEC

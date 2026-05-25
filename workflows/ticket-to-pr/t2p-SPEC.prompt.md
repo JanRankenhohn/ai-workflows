@@ -32,7 +32,7 @@ Resolve the spec directory from `t2p-config.yaml` → `conventions.spec_director
 
 ```
 <spec_directory>/<ticket-id>/
-  plan.md                        (created by /t2p-JIRA — coordination document)
+  plan.md                        (created by /t2p-PLAN — coordination document)
   spec-<subtask-slug>.md         (one per subtask, created by this prompt)
 ```
 
@@ -119,7 +119,7 @@ Then ask the user interactively:
 
 - Frame each question around a specific finding from the code scan
 - Provide concrete options grounded in what the codebase actually looks like
-- Keep questions on **technical approach** — scope/requirements were settled in `/t2p-JIRA`
+- Keep questions on **technical approach** — scope/requirements were settled in `/t2p-PLAN`
 - Batch related questions (max 3-4 per call)
 - If no real issues are found, still confirm key assumptions with 1-2 questions
 

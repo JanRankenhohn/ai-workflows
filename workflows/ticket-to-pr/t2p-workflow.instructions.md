@@ -1,15 +1,20 @@
 ---
-description: "Jira-to-PR development workflow. Defines the pipeline stages, artifacts, conventions, and configuration. Read this when executing any workflow prompt (/t2p-JIRA, /t2p-SPEC, /t2p-IMPLEMENT, /t2p-TEST, /t2p-REVIEW, /t2p-CREATE-PR)."
+description: "Ticket-to-PR development workflow. Defines the pipeline stages, artifacts, conventions, and configuration. Read this when executing any workflow prompt (/t2p-EXPLORE, /t2p-PLAN, /t2p-SPEC, /t2p-IMPLEMENT, /t2p-TEST, /t2p-REVIEW, /t2p-CREATE-PR)."
 ---
 
-# Jira-to-PR Workflow
+# Ticket-to-PR Workflow
 
 A structured, multi-stage AI development pipeline that takes you from a Jira ticket to a review-ready pull request in Azure DevOps. Each stage runs in its own chat session for clean context isolation, with the developer reviewing output between every stage.
 
 ## Pipeline
 
 ```
-/t2p-JIRA <ticket-id>
+[/t2p-EXPLORE <ticket-id>] (optional)
+  → Interactive domain exploration: grilling session, codebase cross-referencing,
+    produces CONTEXT.md glossary and optional ADRs
+  ↓ (developer reviews domain artifacts — skip if domain is well-understood)
+
+/t2p-PLAN <ticket-id>
   → Analyzes ticket, Q&A to refine it, groups subtasks into PR-sized chunks, outputs plan
   ↓ (developer answers Q&A, reviews plan)
 
@@ -51,7 +56,8 @@ A structured, multi-stage AI development pipeline that takes you from a Jira tic
 
 | Prompt           | Purpose                                                 | Input                                            |
 | ---------------- | ------------------------------------------------------- | ------------------------------------------------ |
-| `/t2p-JIRA`      | Fetch ticket, analyze, Q&A, group subtasks, create plan | Parent ticket ID                                 |
+| `/t2p-EXPLORE`   | Optional domain exploration, grilling, CONTEXT.md       | Parent ticket ID (or paste ticket details)       |
+| `/t2p-PLAN`      | Fetch ticket, analyze, Q&A, group subtasks, create plan | Parent ticket ID                                 |
 | `/t2p-SPEC`      | Scan codebase, Q&A, create per-subtask spec             | Subtask ID, parent + name, or just name          |
 | `/t2p-IMPLEMENT` | Implement from subtask spec                             | Subtask ID, parent + name, or just name (+ step) |
 | `/t2p-TEST`      | Generate tests from subtask spec's Test Plan            | Subtask ID, parent + name, or just name          |
@@ -60,12 +66,14 @@ A structured, multi-stage AI development pipeline that takes you from a Jira tic
 
 ## Artifacts
 
-| Artifact | Location                                         | Lifecycle                                                                                     |
-| -------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------- |
-| Plan     | `<spec_directory>/<ticket-id>/plan.md`           | Persisted. Coordination document across subtasks. Not checked into the repo.                  |
-| Spec     | `<spec_directory>/<ticket-id>/spec-<subtask>.md` | One per subtask (= one per PR). Persisted until developer deletes. Not checked into the repo. |
-| Code     | Workspace                                        | Normal git lifecycle                                                                          |
-| Tests    | Workspace                                        | Normal git lifecycle                                                                          |
+| Artifact    | Location                                         | Lifecycle                                                                                     |
+| ----------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| CONTEXT.md  | `<spec_directory>/<ticket-id>/CONTEXT.md`        | Optional. Domain glossary from `/t2p-EXPLORE`. Consumed by PLAN and SPEC.                    |
+| ADRs        | `<spec_directory>/<ticket-id>/adr/`              | Optional. Decision records from `/t2p-EXPLORE`. Not checked into the repo.                   |
+| Plan        | `<spec_directory>/<ticket-id>/plan.md`           | Persisted. Coordination document across subtasks. Not checked into the repo.                  |
+| Spec        | `<spec_directory>/<ticket-id>/spec-<subtask>.md` | One per subtask (= one per PR). Persisted until developer deletes. Not checked into the repo. |
+| Code        | Workspace                                        | Normal git lifecycle                                                                          |
+| Tests       | Workspace                                        | Normal git lifecycle                                                                          |
 
 ## Files in this workflow
 
@@ -85,6 +93,7 @@ A structured, multi-stage AI development pipeline that takes you from a Jira tic
 - `/implement` **pauses after each step** with a summary — the developer reviews and says "continue."
 - `/implement` records decisions/deviations as **Implementation Notes** appended to the spec (only when noteworthy).
 - **Plan tracks subtask status only** — the plan owns cross-subtask coordination (sequencing, dependencies, high-level status). Detailed implementation checklists belong in the subtask spec, not duplicated in the plan. `/implement` updates the plan's subtask status to "In Progress"; the developer updates it to "Done" after merge.
+- **Domain context (CONTEXT.md)** — At the start of every stage that resolves a ticket ID, check `<spec_directory>/<ticket-id>/CONTEXT.md`. If it exists (produced by `/t2p-EXPLORE`), read it and treat its terms as **binding vocabulary** throughout the session. Flag any language that conflicts with the glossary. Also read ADRs from `<spec_directory>/<ticket-id>/adr/` if the directory exists.
 - **Self-reflection** — every prompt ends with a self-reflection step. Follow the process defined below.
 
 ## Skill integration

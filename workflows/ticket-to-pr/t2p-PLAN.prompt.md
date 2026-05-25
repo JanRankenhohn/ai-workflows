@@ -1,5 +1,5 @@
 ---
-description: "Fetch a Jira ticket, critically analyze it, run Q&A with the user, then create a plan document with checklists."
+description: "Fetch a Jira ticket, critically analyze it, run Q&A with the user, then create a plan document with subtask breakdown."
 argument-hint: "ticket-id"
 agent: "agent"
 tools:
@@ -13,7 +13,7 @@ tools:
   ]
 ---
 
-# Jira Ticket Plan
+# Ticket Plan
 
 > **Workflow prompt.** Read `t2p-workflow.instructions.md` for pipeline context and configuration before proceeding.
 

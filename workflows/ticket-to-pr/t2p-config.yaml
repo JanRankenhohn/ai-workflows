@@ -3,7 +3,7 @@
 # Referenced by t2p-workflow.instructions.md — all workflow prompts apply these settings.
 
 mcp_servers:
-  jira: false # Required for /t2p-JIRA and /t2p-REVIEW
+  jira: false # Required for /t2p-EXPLORE, /t2p-PLAN, and /t2p-REVIEW
   azure_devops: false # Required for /t2p-CREATE-PR
 
 tech_stack:
