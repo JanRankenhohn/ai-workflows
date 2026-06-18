@@ -48,20 +48,41 @@ Analyze the ticket and subtasks for:
 - Whether the described approach is the simplest viable option
 - Existing codebase patterns that should be followed
 
-## Step 4 — Q&A with the user
+**CONTEXT.md filter:** Do NOT raise concerns that are already resolved in CONTEXT.md or ADRs. CONTEXT.md decisions override ticket ambiguity — they are the output of the EXPLORE stage. Only flag genuinely unresolved issues.
+
+## Step 4 — Decomposition
+
+Propose a breakdown into subtasks/PRs. Consider:
+
+- **Natural code boundaries** — layers, files, modules that change together
+- **Testability in isolation** — can each subtask be verified independently?
+- **Risk isolation** — risky changes (migrations, API contracts) in their own PR
+- **The `one_subtask_one_pr` convention** from config
+- **Minimum viable split** — could this be one PR? If not, what's the minimum set of PRs where each is independently mergeable and testable?
+
+For small stories with no existing subtasks, the primary value is deciding scope boundaries: what's in this PR vs. deferred to a follow-up ticket.
+
+## Step 5 — Q&A with the user
 
 **Do NOT create the plan document yet.**
 
-Present findings from steps 1-3 as a compact summary:
+Present findings from steps 1-4 as a compact summary:
 
 1. **Ticket overview** — title, type, status, subtask count
 2. **Impact summary** — layers, key files, red flags
-3. **Issues found** — numbered list of concerns from the critical analysis
-4. **Assumptions** — what you'll assume if the user doesn't clarify
+3. **Proposed breakdown** — subtask/PR structure with brief rationale
+4. **Issues found** — only genuinely unresolved concerns (not answered by CONTEXT.md)
+5. **Assumptions** — what you'll assume if the user doesn't clarify
 
-Then ask focused questions (max 3-4 per batch, with concrete options where possible). Flag which are blocking vs. informational. Wait for answers before proceeding.
+Then ask focused questions **using the `vscode_askQuestions` tool** (interactive option selection UI — do NOT just write questions as plain text in chat). Max 3-4 per batch, with concrete options (use the `options` array). Focus questions on:
 
-## Step 5 — Create the plan document
+- **Decomposition choices** — single PR vs. split, what to include/defer
+- **Sequencing trade-offs** — which subtask first, blocking dependencies
+- **Scope decisions** — what's in/out for this ticket vs. follow-up
+
+Do NOT re-ask questions already answered in CONTEXT.md or ADRs. Wait for answers before proceeding.
+
+## Step 6 — Create the plan document
 
 After Q&A is complete, save the plan to the artifact path defined in the workflow instructions:
 

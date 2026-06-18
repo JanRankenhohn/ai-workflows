@@ -85,6 +85,7 @@ A structured, multi-stage AI development pipeline that takes you from a Jira tic
 ## Key conventions
 
 - **Ticket ID parsing:** The first whitespace-delimited token after the prompt name is always a complete identifier (ticket ID, branch name, or subtask name). Use it verbatim — do NOT split, truncate, or reinterpret it at underscores, hyphens, or other internal characters.
+- **JQL quoting:** Always quote issue key values in JQL queries (e.g., `parent = "DEV_VULCAN-5807"`, not `parent = DEV_VULCAN-5807`). Project keys containing underscores or other special characters break unquoted JQL parsing.
 - Each pipeline stage runs in its **own chat session** for context isolation.
 - The developer reviews output between every stage — nothing is fully automatic.
 - `/implement` does **not** write tests. `/test` does **not** implement features.

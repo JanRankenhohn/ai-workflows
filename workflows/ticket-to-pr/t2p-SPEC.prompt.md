@@ -115,10 +115,10 @@ First, present a brief chat summary:
 2. **Assumptions:** List the technical assumptions the spec will be built on (e.g., "Will extend `IOrderRepository` with a new method", "Will reuse existing `OrderModel`")
 3. **Issues:** Any conflicts between the plan and the actual codebase, design trade-offs with multiple valid approaches, missing components, or scope surprises
 
-Then ask the user interactively:
+Then ask the user interactively **using the `vscode_askQuestions` tool** (interactive option selection UI — do NOT just write questions as plain text in chat):
 
 - Frame each question around a specific finding from the code scan
-- Provide concrete options grounded in what the codebase actually looks like
+- Provide concrete options grounded in what the codebase actually looks like (use the `options` array)
 - Keep questions on **technical approach** — scope/requirements were settled in `/t2p-PLAN`
 - Batch related questions (max 3-4 per call)
 - If no real issues are found, still confirm key assumptions with 1-2 questions
