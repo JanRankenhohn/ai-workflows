@@ -4,7 +4,7 @@ argument-hint: "ticket-id (or paste ticket details)"
 agent: "agent"
 tools:
   [
-    "jira/*",
+    "__JIRA_MCP__/*",
     "read",
     "search",
     "edit/createFile",

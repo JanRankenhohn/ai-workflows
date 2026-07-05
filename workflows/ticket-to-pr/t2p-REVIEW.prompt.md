@@ -2,7 +2,7 @@
 description: "Review your own implementation against the subtask spec. Checks spec compliance, code quality, and test coverage."
 argument-hint: "PROJ-1234 (or PROJ-5500 drag-and-drop, or just drag-and-drop)"
 agent: "agent"
-tools: ["jira/*", "read", "search", "execute/runInTerminal"]
+tools: ["__JIRA_MCP__/*", "read", "search", "execute/runInTerminal"]
 ---
 
 # Implementation Review (post-spec)

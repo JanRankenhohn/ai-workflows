@@ -2,7 +2,7 @@
 description: "Create a pull request in Azure DevOps from the current branch, generating a description from the diff and Jira context."
 argument-hint: "PROJ-1234 (or PROJ-5500 drag-and-drop, or just drag-and-drop)"
 agent: "agent"
-tools: ["jira/*", "ado/*", "execute/runInTerminal", "read", "search"]
+tools: ["__JIRA_MCP__/*", "__ADO_MCP__/*", "execute/runInTerminal", "read", "search"]
 ---
 
 # Create Pull Request
@@ -130,7 +130,7 @@ Iterate until the user approves.
 
 > **Skill checkpoint — create pull request:** Check available skills for one that handles PR creation, git push workflows, or platform-specific PR tooling. If found, read and follow that skill. Default: use Azure DevOps MCP or manual creation as described below.
 
-Check `t2p-config.yaml` → `mcp_servers.azure_devops`.
+Check `t2p-config.yaml` → `mcp_servers.azure_devops.enabled`.
 
 **If Azure DevOps MCP is available:** Push the branch if needed, then create the PR using the `ado/*` MCP tools. Provide:
 

@@ -45,7 +45,7 @@ A structured, multi-stage AI development pipeline that takes you from a Jira tic
 
 **Read `t2p-config.yaml` and apply its settings before executing any workflow prompt.** It contains user-customizable settings that affect prompt behavior:
 
-- **MCP servers** — which integrations are available (Jira, Azure DevOps). Skip tools for servers marked as not configured.
+- **MCP servers** — which integrations are available (Jira, Azure DevOps). Each entry has `enabled` (true/false) and `name` (the MCP server name as configured in your VS Code `mcp.json`). Skip tools for servers marked as not enabled.
 - **Tech stack** — maps each stack to its review criteria file and optional persona. `/t2p-REVIEW` loads the matching review criteria based on file types in the diff. `/t2p-SPEC` and `/t2p-IMPLEMENT` load the persona to adopt a stack-specific expert role.
 - **Branch naming** — your branch naming convention, used by `/t2p-CREATE-PR`.
 - **Project conventions** — cross-workspace conventions that apply everywhere.

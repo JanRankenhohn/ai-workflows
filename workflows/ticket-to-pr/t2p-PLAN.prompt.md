@@ -4,7 +4,7 @@ argument-hint: "ticket-id"
 agent: "agent"
 tools:
   [
-    "jira/*",
+    "__JIRA_MCP__/*",
     "edit/editFiles",
     "vscode/askQuestions",
     "search",
@@ -19,7 +19,7 @@ tools:
 
 ## Step 1 — Fetch ticket data
 
-If Jira MCP is configured (`t2p-config.yaml` → `mcp_servers.jira`), fetch all of the following:
+If Jira MCP is configured (`t2p-config.yaml` → `mcp_servers.jira.enabled: true`), fetch all of the following:
 
 - **Main ticket** (`<ticket-id>`): summary, status, description, issuetype, priority, assignee, labels
 - **Subtasks** (JQL `parent = <ticket-id>`): summary, status, description, issuetype, priority, assignee
