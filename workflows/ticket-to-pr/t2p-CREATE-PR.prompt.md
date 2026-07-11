@@ -2,7 +2,8 @@
 description: "Create a pull request in Azure DevOps from the current branch, generating a description from the diff and Jira context."
 argument-hint: "PROJ-1234 (or PROJ-5500 drag-and-drop, or just drag-and-drop)"
 agent: "agent"
-tools: ["__JIRA_MCP__/*", "__ADO_MCP__/*", "execute/runInTerminal", "read", "search"]
+tools:
+  ["__JIRA_MCP__/*", "__ADO_MCP__/*", "execute/runInTerminal", "read", "search"]
 ---
 
 # Create Pull Request

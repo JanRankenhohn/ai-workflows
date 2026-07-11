@@ -66,14 +66,14 @@ A structured, multi-stage AI development pipeline that takes you from a Jira tic
 
 ## Artifacts
 
-| Artifact    | Location                                         | Lifecycle                                                                                     |
-| ----------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------- |
-| CONTEXT.md  | `<spec_directory>/<ticket-id>/CONTEXT.md`        | Optional. Domain glossary from `/t2p-EXPLORE`. Consumed by PLAN and SPEC.                    |
-| ADRs        | `<spec_directory>/<ticket-id>/adr/`              | Optional. Decision records from `/t2p-EXPLORE`. Not checked into the repo.                   |
-| Plan        | `<spec_directory>/<ticket-id>/plan.md`           | Persisted. Coordination document across subtasks. Not checked into the repo.                  |
-| Spec        | `<spec_directory>/<ticket-id>/spec-<subtask>.md` | One per subtask (= one per PR). Persisted until developer deletes. Not checked into the repo. |
-| Code        | Workspace                                        | Normal git lifecycle                                                                          |
-| Tests       | Workspace                                        | Normal git lifecycle                                                                          |
+| Artifact   | Location                                         | Lifecycle                                                                                     |
+| ---------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| CONTEXT.md | `<spec_directory>/<ticket-id>/CONTEXT.md`        | Optional. Domain glossary from `/t2p-EXPLORE`. Consumed by PLAN and SPEC.                     |
+| ADRs       | `<spec_directory>/<ticket-id>/adr/`              | Optional. Decision records from `/t2p-EXPLORE`. Not checked into the repo.                    |
+| Plan       | `<spec_directory>/<ticket-id>/plan.md`           | Persisted. Coordination document across subtasks. Not checked into the repo.                  |
+| Spec       | `<spec_directory>/<ticket-id>/spec-<subtask>.md` | One per subtask (= one per PR). Persisted until developer deletes. Not checked into the repo. |
+| Code       | Workspace                                        | Normal git lifecycle                                                                          |
+| Tests      | Workspace                                        | Normal git lifecycle                                                                          |
 
 ## Files in this workflow
 
